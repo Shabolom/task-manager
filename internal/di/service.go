@@ -30,5 +30,5 @@ func (d *DI) GetTaskService() *task_service.Service {
 }
 
 func (d *DI) GetAuthService() *auth_service.Service {
-	return auth_service.New(d.GetUserRepo(), "secret")
+	return auth_service.New(d.GetUserRepo(), d.GetRoleRepo(), "secret")
 }
