@@ -14,15 +14,21 @@ type UserRepo interface {
 	CreateUser(ctx context.Context, user *dto.User) error
 	GetUserByEmail(ctx context.Context, email string) (*dto.User, error)
 }
+
+type RoleRepo interface {
+	GetRoleByName(ctx context.Context, roleName string) (*dto.Role, error)
+}
 type Service struct {
 	userRepo  UserRepo
 	jwtSecret string
+	roleRepo  RoleRepo
 }
 
-func New(userRepo UserRepo, jwtSecret string) *Service {
+func New(userRepo UserRepo, roleRepo RoleRepo, jwtSecret string) *Service {
 	return &Service{
 		userRepo:  userRepo,
 		jwtSecret: jwtSecret,
+		roleRepo:  roleRepo,
 	}
 }
 
@@ -36,12 +42,17 @@ func (s *Service) Register(ctx context.Context, email, password, fullName string
 		return err
 	}
 
+	role, err := s.roleRepo.GetRoleByName(ctx, "user")
+	if err != nil {
+		return err
+	}
+
 	user := &dto.User{
 		Email:        email,
 		FullName:     fullName,
 		PasswordHash: string(hash),
 		IsActive:     true,
-		RoleID:       1,
+		RoleID:       role.ID,
 	}
 
 	return s.userRepo.CreateUser(ctx, user)
