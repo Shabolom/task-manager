@@ -6,7 +6,7 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Storage) ListBoardsByOwner(ctx context.Context, ownerID int64) ([]dto.Board, error) {
+func (s *Storage) ListBoardsByOwner(ctx context.Context, ownerID int64, pagination dto.Pagination) ([]dto.Board, error) {
 	query := `
 		SELECT
 			id,
@@ -19,10 +19,11 @@ func (s *Storage) ListBoardsByOwner(ctx context.Context, ownerID int64) ([]dto.B
 		FROM boards
 		WHERE owner_id = $1
 		  AND deleted_at IS NULL
-		ORDER BY id DESC
+		ORDER BY id ASC 
+		LIMIT $2 OFFSET $3
 	`
 
-	rows, err := s.conn.Query(ctx, query, ownerID)
+	rows, err := s.conn.Query(ctx, query, ownerID, pagination.Limit, pagination.Offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list boards by owner %d: %w", ownerID, err)
 	}

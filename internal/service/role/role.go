@@ -9,7 +9,7 @@ import (
 
 type RoleRepo interface {
 	GetRoleByID(ctx context.Context, roleID int64) (*dto.Role, error)
-	ListRoles(ctx context.Context) ([]dto.Role, error)
+	ListRoles(ctx context.Context, pagination dto.Pagination) ([]dto.Role, error)
 	CreateRole(ctx context.Context, role *dto.Role) error
 	DeleteRole(ctx context.Context, roleID int64) (int64, error)
 	UpdateRole(ctx context.Context, request dto.UpdateRoleRequest) (dto.Role, error)

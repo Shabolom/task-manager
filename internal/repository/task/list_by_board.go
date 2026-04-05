@@ -6,7 +6,7 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Storage) ListTasksByBoard(ctx context.Context, boardID int64) ([]dto.Task, error) {
+func (s *Storage) ListTasksByBoard(ctx context.Context, boardID int64, pagination dto.Pagination) ([]dto.Task, error) {
 	query := `
 		SELECT
 			id,
@@ -23,9 +23,10 @@ func (s *Storage) ListTasksByBoard(ctx context.Context, boardID int64) ([]dto.Ta
 		WHERE board_id = $1
 		  AND deleted_at IS NULL
 		ORDER BY position ASC, id ASC
+		LIMIT $2 OFFSET $3
 	`
 
-	rows, err := s.conn.Query(ctx, query, boardID)
+	rows, err := s.conn.Query(ctx, query, boardID, pagination.Limit, pagination.Offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list tasks by board %d: %w", boardID, err)
 	}

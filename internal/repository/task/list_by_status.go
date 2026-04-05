@@ -6,7 +6,7 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Storage) ListTasksByStatus(ctx context.Context, statusID int64) ([]dto.Task, error) {
+func (s *Storage) ListTasksByStatus(ctx context.Context, statusID int64, pagination dto.Pagination) ([]dto.Task, error) {
 	query := `
 		SELECT
 			id,
@@ -23,9 +23,10 @@ func (s *Storage) ListTasksByStatus(ctx context.Context, statusID int64) ([]dto.
 		WHERE status_id = $1
 		  AND deleted_at IS NULL
 		ORDER BY position ASC, id ASC
+		LIMIT $2 OFFSET $3
 	`
 
-	rows, err := s.conn.Query(ctx, query, statusID)
+	rows, err := s.conn.Query(ctx, query, statusID, pagination.Limit, pagination.Offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list tasks by status %d: %w", statusID, err)
 	}

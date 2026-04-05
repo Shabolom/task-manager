@@ -5,6 +5,6 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Service) ListTasksByBoard(ctx context.Context, boardID int64) ([]dto.Task, error) {
-	return s.taskRepo.ListTasksByBoard(ctx, boardID)
+func (s *Service) ListTasksByBoard(ctx context.Context, boardID int64, pagination dto.Pagination) ([]dto.Task, error) {
+	return s.taskRepo.ListTasksByBoard(ctx, boardID, pagination)
 }

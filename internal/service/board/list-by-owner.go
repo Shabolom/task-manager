@@ -5,6 +5,6 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Service) ListBoardsByOwner(ctx context.Context, ownerID int64) ([]dto.Board, error) {
-	return s.boardRepo.ListBoardsByOwner(ctx, ownerID)
+func (s *Service) ListBoardsByOwner(ctx context.Context, ownerID int64, pagination dto.Pagination) ([]dto.Board, error) {
+	return s.boardRepo.ListBoardsByOwner(ctx, ownerID, pagination)
 }

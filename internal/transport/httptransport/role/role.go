@@ -7,7 +7,7 @@ import (
 
 type RoleService interface {
 	Get(ctx context.Context, roleID int64) (*dto.Role, error)
-	GetAll(ctx context.Context) ([]dto.Role, error)
+	GetAll(ctx context.Context, pagination dto.Pagination) ([]dto.Role, error)
 	Create(ctx context.Context, role *dto.Role) error
 	DeleteRole(ctx context.Context, roleID int64) (int64, error)
 	Patch(ctx context.Context, patchReq dto.UpdateRoleRequest) (dto.Role, error)

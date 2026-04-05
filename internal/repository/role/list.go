@@ -6,7 +6,7 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Storage) ListRoles(ctx context.Context) ([]dto.Role, error) {
+func (s *Storage) ListRoles(ctx context.Context, pagination dto.Pagination) ([]dto.Role, error) {
 	query := `
 		SELECT
 			id,
@@ -18,9 +18,10 @@ func (s *Storage) ListRoles(ctx context.Context) ([]dto.Role, error) {
 		FROM roles
 		WHERE deleted_at IS NULL
 		ORDER BY id DESC
+		LIMIT $1 OFFSET $2
 	`
 
-	rows, err := s.conn.Query(ctx, query)
+	rows, err := s.conn.Query(ctx, query, pagination.Limit, pagination.Offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list roles: %w", err)
 	}
