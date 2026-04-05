@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"task_manager/internal/dto"
+
+	"go.uber.org/zap"
 )
 
 func (s *Service) UpdateTask(ctx context.Context, updateRequest dto.TaskUpdateRequest) error {
@@ -12,6 +14,10 @@ func (s *Service) UpdateTask(ctx context.Context, updateRequest dto.TaskUpdateRe
 	}
 
 	_, err := s.taskRepo.UpdateTask(ctx, updateRequest)
-	
-	return err
+	if err != nil {
+		s.logger.Warn("Failed to UpdateTask", zap.Error(err))
+		return err
+	}
+
+	return nil
 }

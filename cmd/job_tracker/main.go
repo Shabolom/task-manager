@@ -2,7 +2,11 @@ package main
 
 import (
 	"context"
-	"log"
+	"os"
+
+	"github.com/labstack/gommon/log"
+	"go.uber.org/zap"
+
 	api "task_manager/gen"
 	"task_manager/internal/di"
 
@@ -14,9 +18,9 @@ func main() {
 	// создание контекста
 	ctx := context.Background()
 
-	// загрузка env из файла
+	// читаем env файл и записываем в локальные переменные окружения (локально на машину во время сессии)
 	if err := godotenv.Load("./build/local/.env"); err != nil {
-		log.Println("env file not loaded:", err)
+		panic(err)
 	}
 
 	// создаем новый роутер (клиент http для сетевых вызовов)
@@ -24,9 +28,15 @@ func main() {
 
 	container := di.New(ctx)
 
+	container.Logger()
+	log.Info("starting server", zap.String("port", os.Getenv("PORT")))
+
 	handlers := container.GetHTTPHandlers()
 
 	api.RegisterHandlers(e, handlers)
 
-	e.Start(":8080")
+	err := e.Start(":8080")
+	if err != nil {
+		log.Fatal("start server error", zap.Error(err))
+	}
 }

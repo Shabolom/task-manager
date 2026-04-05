@@ -4,6 +4,8 @@ import (
 	"context"
 	"task_manager/internal/dto"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type BoardRepo interface {
@@ -16,8 +18,9 @@ type BoardRepo interface {
 
 type Service struct {
 	boardRepo BoardRepo
+	logger    *zap.Logger
 }
 
-func New(boardRepo BoardRepo) *Service {
-	return &Service{boardRepo: boardRepo}
+func New(boardRepo BoardRepo, logger *zap.Logger) *Service {
+	return &Service{boardRepo: boardRepo, logger: logger}
 }

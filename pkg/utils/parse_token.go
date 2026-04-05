@@ -18,7 +18,11 @@ func ExtractUserIDFromToken(authHeader string, secret string) (int64, error) {
 		return 0, errors.New("invalid authorization header format")
 	}
 
+	fmt.Println(parts)
+
 	tokenString := parts[1]
+
+	fmt.Println(tokenString)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

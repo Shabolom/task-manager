@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"task_manager/internal/dto"
+
+	"go.uber.org/zap"
 )
 
 func (s *Service) GetUserByID(ctx context.Context, userID int64) (*dto.User, error) {
 	user, err := s.userRepo.GetUserByID(ctx, userID)
 	if err != nil {
+		s.logger.Warn("Failed to GetUserByID", zap.Error(err))
 		return nil, err
 	}
 	if user == nil {

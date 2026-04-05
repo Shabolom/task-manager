@@ -4,7 +4,7 @@ import (
 	board_repo "task_manager/internal/repository/board"
 	role_repo "task_manager/internal/repository/role"
 	status_repo "task_manager/internal/repository/statuses"
-	"task_manager/internal/repository/task"
+	task_repo "task_manager/internal/repository/task"
 	user_repo "task_manager/internal/repository/user"
 )
 
@@ -24,6 +24,6 @@ func (d *DI) GetStatusRepo() *status_repo.Storage {
 	return status_repo.New(d.GetPgDatabase())
 }
 
-func (d *DI) GetTaskRepo() *task.Storage {
-	return task.New(d.GetPgDatabase())
+func (d *DI) GetTaskRepo() *task_repo.Storage {
+	return task_repo.New(d.GetPgDatabase())
 }

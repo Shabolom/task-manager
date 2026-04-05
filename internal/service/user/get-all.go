@@ -5,6 +5,6 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Service) ListUsers(ctx context.Context) ([]dto.User, error) {
-	return s.userRepo.ListUsers(ctx)
+func (s *Service) ListUsers(ctx context.Context, pagination dto.Pagination) ([]dto.User, error) {
+	return s.userRepo.ListUsers(ctx, pagination)
 }

@@ -10,25 +10,25 @@ import (
 )
 
 func (d *DI) GetRoleService() *role_service.Service {
-	return role_service.New(d.GetRoleRepo())
+	return role_service.New(d.GetRoleRepo(), d.Logger())
 }
 
 func (d *DI) GetBoardService() *board_service.Service {
-	return board_service.New(d.GetBoardRepo())
+	return board_service.New(d.GetBoardRepo(), d.Logger())
 }
 
 func (d *DI) GetUserService() *user_service.Service {
-	return user_service.New(d.GetUserRepo())
+	return user_service.New(d.GetUserRepo(), d.Logger())
 }
 
 func (d *DI) GetStatusService() *status_service.Service {
-	return status_service.New(d.GetStatusRepo())
+	return status_service.New(d.GetStatusRepo(), d.Logger())
 }
 
 func (d *DI) GetTaskService() *task_service.Service {
-	return task_service.New(d.GetTaskRepo())
+	return task_service.New(d.GetTaskRepo(), d.Logger())
 }
 
 func (d *DI) GetAuthService() *auth_service.Service {
-	return auth_service.New(d.GetUserRepo(), d.GetRoleRepo(), "secret")
+	return auth_service.New(d.GetUserRepo(), d.GetRoleRepo(), "secret", d.Logger())
 }

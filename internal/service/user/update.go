@@ -6,6 +6,8 @@ import (
 	"strings"
 	"task_manager/internal/dto"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 func (s *Service) UpdateUser(
@@ -39,6 +41,7 @@ func (s *Service) UpdateUser(
 
 	updatedAt, err := s.userRepo.UpdateUser(ctx, userID, request)
 	if err != nil {
+		s.logger.Warn("Failed to UpdateUser", zap.Error(err))
 		return nil, err
 	}
 	if updatedAt == nil {

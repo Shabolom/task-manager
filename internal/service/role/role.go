@@ -3,6 +3,8 @@ package role
 import (
 	"context"
 	"task_manager/internal/dto"
+
+	"go.uber.org/zap"
 )
 
 type RoleRepo interface {
@@ -15,8 +17,11 @@ type RoleRepo interface {
 
 type Service struct {
 	roleRepo RoleRepo
+	logger   *zap.Logger
 }
 
-func New(roleRepo RoleRepo) *Service {
-	return &Service{roleRepo: roleRepo}
+func New(roleRepo RoleRepo, logger *zap.Logger) *Service {
+	return &Service{
+		roleRepo: roleRepo,
+		logger:   logger}
 }

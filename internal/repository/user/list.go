@@ -6,7 +6,7 @@ import (
 	"task_manager/internal/dto"
 )
 
-func (s *Storage) ListUsers(ctx context.Context) ([]dto.User, error) {
+func (s *Storage) ListUsers(ctx context.Context, pagination dto.Pagination) ([]dto.User, error) {
 	query := `
 		SELECT
 			id,
@@ -22,9 +22,10 @@ func (s *Storage) ListUsers(ctx context.Context) ([]dto.User, error) {
 		FROM users
 		WHERE deleted_at IS NULL
 		ORDER BY id DESC
+		LIMIT $1 OFFSET $2;
 	`
 
-	rows, err := s.conn.Query(ctx, query)
+	rows, err := s.conn.Query(ctx, query, pagination.Limit, pagination.Offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list users: %w", err)
 	}

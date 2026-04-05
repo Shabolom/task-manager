@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,13 +23,15 @@ type Service struct {
 	userRepo  UserRepo
 	jwtSecret string
 	roleRepo  RoleRepo
+	logger    *zap.Logger
 }
 
-func New(userRepo UserRepo, roleRepo RoleRepo, jwtSecret string) *Service {
+func New(userRepo UserRepo, roleRepo RoleRepo, jwtSecret string, logger *zap.Logger) *Service {
 	return &Service{
 		userRepo:  userRepo,
 		jwtSecret: jwtSecret,
 		roleRepo:  roleRepo,
+		logger:    logger,
 	}
 }
 
@@ -39,11 +42,13 @@ func (s *Service) Register(ctx context.Context, email, password, fullName string
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
+		s.logger.Warn("Failed to hash password", zap.Error(err))
 		return err
 	}
 
 	role, err := s.roleRepo.GetRoleByName(ctx, "user")
 	if err != nil {
+		s.logger.Warn("Failed to get role", zap.Error(err))
 		return err
 	}
 
@@ -61,6 +66,7 @@ func (s *Service) Register(ctx context.Context, email, password, fullName string
 func (s *Service) Login(ctx context.Context, email, password string) (*dto.TokenPair, error) {
 	user, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
+		s.logger.Warn("Failed to get user by email", zap.Error(err))
 		return nil, errors.New("invalid credentials")
 	}
 
@@ -75,11 +81,13 @@ func (s *Service) Login(ctx context.Context, email, password string) (*dto.Token
 
 	accessToken, err := s.generateToken(user.ID, 15*time.Minute)
 	if err != nil {
+		s.logger.Warn("Failed to generate token", zap.Error(err))
 		return nil, err
 	}
 
 	refreshToken, err := s.generateToken(user.ID, 7*24*time.Hour)
 	if err != nil {
+		s.logger.Warn("Failed to generate token", zap.Error(err))
 		return nil, err
 	}
 
@@ -111,11 +119,13 @@ func (s *Service) Refresh(ctx context.Context, refreshToken string) (*dto.TokenP
 
 	accessToken, err := s.generateToken(userID, 15*time.Minute)
 	if err != nil {
+		s.logger.Warn("Failed to generate accessToken", zap.Error(err))
 		return nil, err
 	}
 
 	newRefreshToken, err := s.generateToken(userID, 7*24*time.Hour)
 	if err != nil {
+		s.logger.Warn("Failed to generate refreshToken", zap.Error(err))
 		return nil, err
 	}
 
@@ -140,6 +150,7 @@ func (s *Service) parseToken(tokenStr string) (jwt.MapClaims, error) {
 		return []byte(s.jwtSecret), nil
 	})
 	if err != nil || !token.Valid {
+		s.logger.Warn("Failed to parse token", zap.Error(err))
 		return nil, err
 	}
 

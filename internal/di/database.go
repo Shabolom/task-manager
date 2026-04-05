@@ -12,6 +12,7 @@ const (
 	initTimeout = 3 * time.Second
 )
 
+// GetPgDatabase подключение к базе данных
 func (d *DI) GetPgDatabase() *pgxpool.Pool {
 	if d.pgConn != nil {
 		return d.pgConn

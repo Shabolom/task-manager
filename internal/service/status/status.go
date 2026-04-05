@@ -4,6 +4,8 @@ import (
 	"context"
 	"task_manager/internal/dto"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type StatusRepo interface {
@@ -21,8 +23,9 @@ type StatusRepo interface {
 
 type Service struct {
 	statusRepo StatusRepo
+	logger     *zap.Logger
 }
 
-func New(statusRepo StatusRepo) *Service {
-	return &Service{statusRepo: statusRepo}
+func New(statusRepo StatusRepo, logger *zap.Logger) *Service {
+	return &Service{statusRepo: statusRepo, logger: logger}
 }
